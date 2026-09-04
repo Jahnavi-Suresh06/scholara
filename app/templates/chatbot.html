@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}ResearchBot | Scholara {% endblock %}
+
+{% block content %}
+
+<div class="chatbot-page">
+
+    <!-- Header -->
+    <div class="chatbot-header">
+        <div class="bot-avatar"><i class="bi bi-robot"></i></div>
+
+        <div>
+            <h1>ResearchBot</h1>
+            <p>AI Research Assistant</p>
+        </div>
+
+        <div class="bot-status">
+            <span class="status-dot"></span>
+            Online
+        </div>
+    </div>
+
+
+    <!-- Chat Area -->
+    <div class="chat-container">
+
+        <!-- Welcome Message -->
+        <div class="message bot-message">
+
+            <div class="message-avatar">
+                <i class="bi bi-robot"></i>
+            </div>
+
+            <div class="message-content">
+
+                <div class="message-header-row">
+                    <div class="message-name">
+                        ResearchBot
+                    </div>
+                    <button class="speak-button" title="Listen to response">
+                        <i class="bi bi-volume-up"></i>
+                    </button>
+                </div>
+
+                <div class="bot-response">
+                    <p>
+                        <i class="bi bi-stars"></i> Hello! I'm ResearchBot, your AI research assistant.
+                    </p>
+
+                    <p>
+                        I can help you understand research topics, explain
+                        concepts, summarize papers, and answer research-related
+                        questions.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Quick Questions -->
+        <div class="quick-actions">
+
+            <button onclick="askQuestion('What is semantic search?')">
+                <i class="bi bi-cpu"></i> Semantic Search
+            </button>
+
+            <button onclick="askQuestion('Explain Sentence-BERT')">
+                <i class="bi bi-diagram-3"></i> Sentence-BERT
+            </button>
+
+            <button onclick="askQuestion('How is AI used in research?')">
+                <i class="bi bi-robot"></i> AI in Research
+            </button>
+
+        </div>
+
+
+        <!-- Messages appear here -->
+        <div id="chatMessages"></div>
+
+
+        <!-- Input -->
+        <div class="chat-input-area">
+
+            <button id="micButton" class="mic-button" type="button" title="Voice input" onclick="toggleVoiceInput()">
+                <i class="bi bi-mic"></i>
+            </button>
+
+            <input type="text" id="messageInput" placeholder="Ask ResearchBot about research..." autocomplete="off">
+
+            <button id="sendButton" onclick="sendMessage()">
+                <i class="bi bi-send-fill"></i>
+            </button>
+
+        </div>
+
+        <div id="voiceStatus" class="voice-status" style="display: none;">
+            <span class="listening-dot"></span>
+            <span id="voiceStatusText">Listening...</span>
+        </div>
+
+        <div class="input-hint">
+            ResearchBot can explain concepts, summarize papers and help with research.
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+
+{% endblock %}

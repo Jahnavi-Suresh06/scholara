@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Scholara{% endblock %}
+
+{% block content %}
+<h4 class="mb-4">Welcome back, {{ current_user.username }}</h4>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card card-modern h-100">
+            <div class="card-body">
+                <h5 class="section-title"><i class="bi bi-bookmark-star"></i> Your Bookmarks ({{ bookmarks|length }})</h5>
+                {% if bookmarks %}
+                    <ul class="list-group list-group-flush">
+                        {% for paper in bookmarks[:5] %}
+                            <li class="list-group-item">
+                                <a href="{{ url_for('paper.paper_detail', paper_id=paper.id) }}">{{ paper.title }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <a href="{{ url_for('bookmark.list_bookmarks') }}" class="btn btn-sm btn-outline-primary mt-3">View all</a>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="bi bi-bookmark"></i>
+                        <p class="mb-0">You haven't bookmarked any papers yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card card-modern h-100">
+            <div class="card-body">
+                <h5 class="section-title"><i class="bi bi-clock-history"></i> Recent Searches</h5>
+                {% if recent_searches %}
+                    <ul class="list-group list-group-flush">
+                        {% for entry in recent_searches %}
+                            <li class="list-group-item d-flex justify-content-between">
+                                <a href="{{ url_for('search.search', q=entry.query_text) }}">{{ entry.query_text }}</a>
+                                <small class="text-muted">{{ entry.searched_at.strftime('%d %b, %H:%M') }}</small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="bi bi-search"></i>
+                        <p class="mb-0">No searches yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card card-modern mt-4">
+    <div class="card-body">
+        <h5 class="section-title"><i class="bi bi-stars"></i> Recommended For You</h5>
+        {% if not recommendations_available %}
+            <p class="text-muted mb-0">
+                <i class="bi bi-exclamation-triangle-fill text-warning"></i> Recommendations aren't available yet. Run
+                <code>python datasets/scripts/build_embeddings.py</code> to
+                generate them.
+            </p>
+        {% elif cold_start %}
+            <div class="empty-state">
+                <i class="bi bi-bookmark-heart"></i>
+                <p class="mb-0">
+                    Bookmark a few papers you're interested in, and we'll start
+                    recommending similar ones here -- based on the actual meaning
+                    of what you've saved, not just shared keywords.
+                </p>
+            </div>
+        {% elif recommended_papers|length == 0 %}
+            <p class="text-muted mb-0">No recommendations available right now.</p>
+        {% else %}
+            <div class="list-group list-group-flush">
+                {% for item in recommended_papers %}
+                    <a href="{{ url_for('paper.paper_detail', paper_id=item.paper.id) }}"
+                       class="list-group-item list-group-item-action border-0 px-0 py-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h6 class="mb-1">{{ item.paper.title }}</h6>
+                            <span class="match-badge"><i class="bi bi-graph-up"></i> {{ item.explanation.score_percent }}% match</span>
+                        </div>
+                        <div class="explanation-card">
+                            <div class="explanation-title"><i class="bi bi-lightbulb"></i> Why this was recommended</div>
+                            <p class="mb-0">{{ item.explanation.summary }}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

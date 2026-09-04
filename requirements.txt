@@ -1,0 +1,35 @@
+# ---- Core web framework ----
+Flask==3.0.3
+Werkzeug==3.0.3
+
+# ---- Database / ORM / migrations ----
+Flask-SQLAlchemy==3.1.1
+Flask-Migrate==4.0.7
+SQLAlchemy==2.0.30
+
+# ---- Auth (used from Phase 6 onward) ----
+Flask-Login==0.6.3
+
+# ---- Environment / config ----
+python-dotenv==1.0.1
+
+# ---- Data processing (used by datasets/scripts/*.py, Phase 5) ----
+pandas==2.2.2
+numpy==1.26.4
+
+# ---- OpenAlex API client (used by datasets/scripts/fetch_openalex.py) ----
+requests==2.32.3
+
+# ---- ML / recommendation engine (used from Phase 8 onward) ----
+sentence-transformers==3.0.1
+datasets==2.20.0
+scikit-learn==1.5.1
+
+# ---- Production server (used in Phase 10 deployment) ----
+gunicorn==22.0.0
+
+# ---- Testing ----
+pytest==8.2.2
+
+# ---- Goggle Chatbot ----
+google-genai

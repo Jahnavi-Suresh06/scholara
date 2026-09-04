@@ -1,0 +1,489 @@
+{% extends "base.html" %}
+
+{% block title %}
+Profile & Settings | Scholara
+{% endblock %}
+
+
+{% block content %}
+
+<div class="profile-page">
+
+    <!-- ========================================= -->
+    <!-- PAGE HEADER -->
+    <!-- ========================================= -->
+
+    <div class="profile-page-header">
+
+        <h2>Profile & Settings</h2>
+
+        <p>
+            Manage your account information, security, and preferences.
+        </p>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- PROFILE HEADER -->
+    <!-- ========================================= -->
+
+    <div class="profile-header-card">
+
+        <div class="profile-avatar">
+
+            {{ user.username[0]|upper }}
+
+        </div>
+
+
+        <div class="profile-user-details">
+
+            <h3>{{ user.username }}</h3>
+
+            <p>{{ user.email }}</p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- ACCOUNT INFORMATION + SECURITY -->
+    <!-- ========================================= -->
+
+    <div class="profile-top-grid">
+
+
+        <!-- ========================================= -->
+        <!-- ACCOUNT INFORMATION -->
+        <!-- ========================================= -->
+
+        <div class="settings-card account-card">
+
+
+            <!-- CARD TITLE -->
+
+            <div class="card-title">
+
+                <i class="bi bi-person"></i>
+
+                <h5>Account Information</h5>
+
+            </div>
+
+
+            <!-- ACCOUNT DETAILS -->
+
+            <div class="account-details">
+
+
+                <!-- USERNAME -->
+
+                <div class="account-item">
+
+                    <span class="account-label">
+                        Username
+                    </span>
+
+                    <span class="account-value">
+                        {{ user.username }}
+                    </span>
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="account-item">
+
+                    <span class="account-label">
+                        Email
+                    </span>
+
+                    <span class="account-value">
+                        {{ user.email }}
+                    </span>
+
+                </div>
+
+
+                <!-- RESEARCH INTEREST -->
+
+                <div class="account-item">
+
+                    <span class="account-label">
+                        Research Interest
+                    </span>
+
+                    <span class="account-value">
+                        {{ user.domain_interest or "Not set" }}
+                    </span>
+
+                </div>
+
+
+                <!-- MEMBER SINCE -->
+
+                <div class="account-item">
+
+                    <span class="account-label">
+                        Member Since
+                    </span>
+
+                    <span class="account-value">
+                        {{ user.created_at.strftime('%d %b %Y') }}
+                    </span>
+
+                </div>
+
+
+                <!-- ADMIN ROLE -->
+
+                {% if user.is_admin %}
+
+                <div class="account-item">
+
+                    <span class="account-label">
+                        Role
+                    </span>
+
+                    <span class="badge bg-danger">
+                        Admin
+                    </span>
+
+                </div>
+
+                {% endif %}
+
+
+            </div>
+
+
+            <!-- ========================================= -->
+            <!-- EDIT PROFILE BUTTON -->
+            <!-- ========================================= -->
+
+            <div class="account-action">
+
+                <a href="{{ url_for('auth.edit_profile') }}" class="btn btn-outline-primary edit-profile-btn">
+
+                    <i class="bi bi-pencil-square"></i>
+
+                    Edit Profile
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- SECURITY -->
+        <!-- ========================================= -->
+
+        <div class="settings-card security-card">
+
+            <div class="card-title">
+
+                <i class="bi bi-shield-lock"></i>
+
+                <h5>Security</h5>
+
+            </div>
+
+
+            <div class="security-content">
+
+                <div class="security-icon">
+
+                    <i class="bi bi-shield-check"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h6>
+                        Keep your account secure
+                    </h6>
+
+                    <p>
+                        Regularly updating your password helps protect your
+                        account and personal information.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- CHANGE PASSWORD -->
+
+            <a href="{{ url_for('auth.update_password') }}" class="btn btn-primary change-password-btn">
+
+                <i class="bi bi-key"></i>
+
+                Change Password
+
+            </a>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- APPEARANCE -->
+    <!-- ========================================= -->
+
+    <div class="settings-card appearance-card">
+
+
+        <div class="settings-card-header">
+
+            <div class="section-icon">
+
+                <i class="bi bi-palette"></i>
+
+            </div>
+
+
+            <div>
+
+                <h5>Appearance</h5>
+
+                <p>
+                    Choose how Scholara looks on your device.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="theme-grid">
+
+
+            <!-- LIGHT -->
+
+            <label class="theme-card">
+
+                <input type="radio" name="theme" value="light">
+
+                <div class="theme-card-content">
+
+                    <div class="theme-icon">
+
+                        <i class="bi bi-sun"></i>
+
+                    </div>
+
+
+                    <div class="theme-text">
+
+                        <strong>Light</strong>
+
+                        <span>
+                            Use the light theme
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </label>
+
+
+            <!-- DARK -->
+
+            <label class="theme-card">
+
+                <input type="radio" name="theme" value="dark">
+
+                <div class="theme-card-content">
+
+                    <div class="theme-icon">
+
+                        <i class="bi bi-moon"></i>
+
+                    </div>
+
+
+                    <div class="theme-text">
+
+                        <strong>Dark</strong>
+
+                        <span>
+                            Use the dark theme
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </label>
+
+
+            <!-- SYSTEM -->
+
+            <label class="theme-card">
+
+                <input type="radio" name="theme" value="system">
+
+                <div class="theme-card-content">
+
+                    <div class="theme-icon">
+
+                        <i class="bi bi-display"></i>
+
+                    </div>
+
+
+                    <div class="theme-text">
+
+                        <strong>System</strong>
+
+                        <span>
+                            Match your device settings
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </label>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- ACCOUNT ACTIVITY -->
+    <!-- ========================================= -->
+
+    <div class="settings-card activity-section">
+
+
+        <div class="settings-card-header">
+
+            <div class="section-icon">
+
+                <i class="bi bi-bar-chart"></i>
+
+            </div>
+
+
+            <div>
+
+                <h5>Account Activity</h5>
+
+                <p>
+                    Quickly access your saved papers and recent searches.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity-grid">
+
+
+            <!-- ========================================= -->
+            <!-- BOOKMARKS -->
+            <!-- ========================================= -->
+
+            <a href="{{ url_for('bookmark.list_bookmarks') }}" class="activity-card">
+
+                <div class="activity-left">
+
+
+                    <div class="activity-icon">
+
+                        <i class="bi bi-bookmark"></i>
+
+                    </div>
+
+
+                    <div class="activity-content">
+
+                        <h6>
+                            Your Bookmarks
+                        </h6>
+
+                        <p>
+                            View your saved research papers
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="activity-arrow">
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </div>
+
+
+            </a>
+
+
+            <!-- ========================================= -->
+            <!-- RECENT SEARCHES -->
+            <!-- ========================================= -->
+
+            <a href="{{ url_for('search.recent_searches') }}" class="activity-card">
+
+                <div class="activity-left">
+
+
+                    <div class="activity-icon">
+
+                        <i class="bi bi-clock-history"></i>
+
+                    </div>
+
+
+                    <div class="activity-content">
+
+                        <h6>
+                            Recent Searches
+                        </h6>
+
+                        <p>
+                            View your recent research searches
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="activity-arrow">
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </div>
+
+
+            </a>
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+{% endblock %}

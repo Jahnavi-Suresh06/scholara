@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Register | Scholara{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card card-modern">
+            <div class="card-body p-4">
+                <h4 class="card-title mb-1"><i class="bi bi-person-plus"></i> Create an account</h4>
+                <p class="text-muted small mb-4">Join to bookmark papers and get personalized recommendations.</p>
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" required minlength="8">
+                        <div class="form-text">At least 8 characters.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Primary research interest / domain (optional)</label>
+                        <input type="text" class="form-control" name="domain_interest"
+                            placeholder="e.g. Machine Learning, NLP, Computer Vision">
+                        <div class="form-text">Helps personalize your dashboard before you've bookmarked any papers.
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                </form>
+                <p class="mt-3 mb-0 text-center small">
+                    Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

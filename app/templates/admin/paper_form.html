@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{{ "Edit Paper" if paper else "Add Paper" }} | Scholara{% endblock %}
+
+{% block content %}
+<h4 class="mb-3">{{ "Edit Paper" if paper else "Add New Paper" }}</h4>
+
+{% set data = form_data or paper %}
+
+<form method="post" class="card card-body">
+    <div class="mb-3">
+        <label class="form-label">Title *</label>
+        <input type="text" class="form-control" name="title" required value="{{ data.title if data else '' }}">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Authors *</label>
+        <input type="text" class="form-control" name="authors" required value="{{ data.authors if data else '' }}">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Abstract *</label>
+        <textarea class="form-control" name="abstract" rows="5" required>{{ data.abstract if data else '' }}</textarea>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Keywords / Categories</label>
+            <input type="text" class="form-control" name="keywords" value="{{ data.keywords if data else '' }}">
+        </div>
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Publication Year</label>
+            <input type="number" class="form-control" name="publication_year" value="{{ data.publication_year if data else '' }}">
+        </div>
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Citation Count</label>
+            <input type="number" class="form-control" name="citation_count" value="{{ data.citation_count if data else 0 }}">
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Journal / Conference</label>
+        <input type="text" class="form-control" name="journal_conference" value="{{ data.journal_conference if data else '' }}">
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">DOI</label>
+            <input type="text" class="form-control" name="doi" value="{{ data.doi if data else '' }}">
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">PDF Link</label>
+            <input type="url" class="form-control" name="pdf_link" value="{{ data.pdf_link if data else '' }}">
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">{{ "Save Changes" if paper else "Create Paper" }}</button>
+    <a href="{{ url_for('admin.manage_papers') }}" class="btn btn-outline-secondary">Cancel</a>
+</form>
+{% endblock %}

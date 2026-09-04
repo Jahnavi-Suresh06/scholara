@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Home | Scholara
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <h1>Scholara</h1>
+
+    <p>
+        An AI-powered system that recommends research papers using
+        <strong>semantic understanding</strong> with Sentence Transformers
+        and cosine similarity, rather than simple keyword matching.
+    </p>
+</div>
+
+<!-- Status Cards -->
+<div class="row g-4 status-section">
+
+    <!-- Database Status -->
+    <div class="col-md-6">
+        <div class="card status-card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-database"></i> Database Status</h5>
+
+                <p class="card-text">
+                    Papers currently loaded into the database:
+                    <strong>{{ paper_count_in_db }}</strong>
+                </p>
+
+                <div class="status-badge">
+                    <i class="bi bi-check-circle-fill"></i> Database connected
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dataset Status -->
+    <div class="col-md-6">
+        <div class="card status-card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-bar-chart-fill"></i> Dataset Status</h5>
+
+                {% if dataset_stats.available %}
+
+                    <p class="card-text text-success">
+                        <i class="bi bi-check-circle-fill"></i>
+                        Cleaned dataset found:
+                        <strong>{{ dataset_stats.row_count }}</strong> papers
+                    </p>
+
+                    <p class="dataset-file">
+                        Source: <code>papers_cleaned.csv</code>
+                    </p>
+
+                {% else %}
+
+                    <p class="card-text text-warning">
+                        <i class="bi bi-exclamation-triangle-fill"></i> {{ dataset_stats.message }}
+                    </p>
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

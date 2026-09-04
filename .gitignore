@@ -1,0 +1,39 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+*.egg
+
+# --- Virtual environments ---
+venv/
+env/
+.venv/
+
+# --- Environment secrets ---
+.env
+
+# --- Flask / instance data ---
+instance/*.db
+instance/*.sqlite3
+
+# --- Flask-Migrate is versioned, so migrations/ is intentionally NOT ignored ---
+
+# --- Dataset artifacts (large / regenerable, don't bloat the repo) ---
+datasets/raw/*.json
+datasets/embeddings/*.npy
+
+# Keep the folders themselves tracked even though their contents are ignored
+!datasets/raw/.gitkeep
+!datasets/embeddings/.gitkeep
+
+# --- Editor / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Testing ---
+.pytest_cache/
+.coverage
+htmlcov/

@@ -1,0 +1,909 @@
+/* =========================================
+   THEME MANAGEMENT
+   SCHOLARA
+========================================= */
+
+
+/* =========================================
+   LIGHT THEME
+========================================= */
+
+:root,
+html[data-theme="light"] {
+
+    --theme-bg: #f5f7fb;
+    --theme-card: #ffffff;
+    --theme-card-hover: #f8f9fc;
+
+    --theme-text: #26364a;
+    --theme-muted: #64748b;
+
+    --theme-border: #dce3ee;
+
+    --theme-primary: #4f46e5;
+    --theme-primary-hover: #4338ca;
+
+}
+
+
+/* =========================================
+   DARK THEME
+========================================= */
+
+html[data-theme="dark"] {
+
+    --theme-bg: #111827;
+
+    --theme-card: #1e293b;
+    --theme-card-hover: #263449;
+
+    --theme-text: #f1f5f9;
+    --theme-muted: #aab7c8;
+
+    --theme-border: #334155;
+
+    --theme-primary: #818cf8;
+    --theme-primary-hover: #6366f1;
+
+}
+
+
+/* =========================================
+   SYSTEM THEME
+========================================= */
+
+@media (prefers-color-scheme: dark) {
+
+    html[data-theme="system"] {
+
+        --theme-bg: #111827;
+
+        --theme-card: #1e293b;
+        --theme-card-hover: #263449;
+
+        --theme-text: #f1f5f9;
+        --theme-muted: #aab7c8;
+
+        --theme-border: #334155;
+
+        --theme-primary: #818cf8;
+        --theme-primary-hover: #6366f1;
+
+    }
+
+}
+
+
+/* =========================================
+   BODY
+========================================= */
+
+html,
+body {
+
+    background-color: var(--theme-bg) !important;
+    color: var(--theme-text) !important;
+
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+
+}
+
+
+main {
+
+    background-color: transparent !important;
+
+}
+
+
+/* =========================================
+   NAVBAR
+   Preserve Original Navbar Layout
+========================================= */
+
+/* Only fix colors in dark mode */
+
+html[data-theme="dark"] .app-navbar {
+
+    border-bottom-color: var(--theme-border) !important;
+
+}
+
+
+html[data-theme="dark"] .app-navbar .navbar-brand {
+
+    color: #f1f5f9 !important;
+
+}
+
+
+html[data-theme="dark"] .app-navbar .nav-link {
+
+    color: #cbd5e1 !important;
+
+}
+
+
+html[data-theme="dark"] .app-navbar .nav-link:hover {
+
+    color: #ffffff !important;
+
+}
+
+
+/* =========================================
+   NAVBAR SEARCH
+========================================= */
+
+html[data-theme="dark"] .app-navbar .form-control {
+
+    background-color: #1e293b !important;
+
+    color: #f1f5f9 !important;
+
+    border-color: #334155 !important;
+
+}
+
+
+html[data-theme="dark"] .app-navbar .form-control::placeholder {
+
+    color: #94a3b8 !important;
+
+}
+
+
+/* =========================================
+   GENERAL CARDS
+========================================= */
+
+.settings-card,
+.profile-header-card,
+.activity-card {
+
+    background-color: var(--theme-card) !important;
+
+    color: var(--theme-text) !important;
+
+    border-color: var(--theme-border) !important;
+
+}
+
+
+/* Bootstrap Cards */
+
+.card {
+
+    background-color: var(--theme-card) !important;
+
+    color: var(--theme-text) !important;
+
+    border-color: var(--theme-border) !important;
+
+}
+
+
+/* =========================================
+   PROFILE PAGE
+========================================= */
+
+.profile-page {
+
+    color: var(--theme-text) !important;
+
+}
+
+
+.profile-page-header h2 {
+
+    color: var(--theme-text) !important;
+
+}
+
+
+.profile-page-header p {
+
+    color: var(--theme-muted) !important;
+
+}
+
+
+/* =========================================
+   PROFILE HEADER
+========================================= */
+
+.profile-user-details h3 {
+
+    color: var(--theme-text) !important;
+
+}
+
+
+.profile-user-details p {
+
+    color: var(--theme-muted) !important;
+
+}
+
+
+/* =========================================
+   ACCOUNT INFORMATION
+========================================= */
+
+.card-title h5 {
+
+    color: var(--theme-text) !important;
+
+}
+
+
+.account-label {
+
+    color: var(--theme-muted) !important;
+
+}
+
+
+.account-value {
+
+    color: var(--theme-text) !important;
+
+}
+
+
+/* =========================================
+   SECURITY
+========================================= */
+
+.security-content h6 {
+
+    color: var(--theme-text) !important;
+
+}
+
+
+.security-content p {
+
+    color: var(--theme-muted) !important;
+
+}
+
+
+/* =========================================
+   APPEARANCE HEADER
+========================================= */
+
+.settings-card-header h5 {
+
+    color: var(--theme-text) !important;
+
+}
+
+
+.settings-card-header p {
+
+    color: var(--theme-muted) !important;
+
+}
+
+
+/* =========================================
+   THEME GRID
+========================================= */
+
+.theme-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 16px;
+
+}
+
+
+/* =========================================
+   THEME CARD
+========================================= */
+
+.theme-card {
+
+    position: relative;
+
+    display: block;
+
+    width: 100%;
+
+    min-height: 92px;
+
+    background-color: var(--theme-card) !important;
+
+    border: 1px solid var(--theme-border) !important;
+
+    border-radius: 14px;
+
+    color: var(--theme-text) !important;
+
+    cursor: pointer;
+
+    overflow: hidden;
+
+    transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.2s ease;
+
+}
+
+
+/* Theme Card Hover */
+
+.theme-card:hover {
+
+    background-color: var(--theme-card-hover) !important;
+
+    border-color: var(--theme-primary) !important;
+
+    transform: translateY(-2px);
+
+}
+
+
+/* =========================================
+   HIDE RADIO BUTTON
+========================================= */
+
+.theme-card input[type="radio"] {
+
+    position: absolute;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+}
+
+
+/* =========================================
+   THEME CARD CONTENT
+========================================= */
+
+.theme-card-content {
+
+    display: flex !important;
+
+    align-items: center !important;
+
+    gap: 14px;
+
+    width: 100%;
+
+    height: 100%;
+
+    padding: 18px 20px;
+
+}
+
+
+/* =========================================
+   THEME ICON
+========================================= */
+
+.theme-icon {
+
+    width: 48px;
+
+    height: 48px;
+
+    min-width: 48px;
+
+    display: flex !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    border-radius: 12px;
+
+    background-color: rgba(99, 102, 241, 0.12) !important;
+
+    color: var(--theme-primary) !important;
+
+    font-size: 21px;
+
+}
+
+
+/* =========================================
+   THEME TEXT
+========================================= */
+
+.theme-text {
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    justify-content: center;
+
+    gap: 4px;
+
+    opacity: 1 !important;
+
+}
+
+
+.theme-text strong {
+
+    display: block !important;
+
+    color: var(--theme-text) !important;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    opacity: 1 !important;
+
+}
+
+
+.theme-text span {
+
+    display: block !important;
+
+    color: var(--theme-muted) !important;
+
+    font-size: 14px;
+
+    opacity: 1 !important;
+
+}
+
+
+/* =========================================
+   SELECTED THEME CARD
+========================================= */
+
+.theme-card:has(input[type="radio"]:checked) {
+
+    background-color: var(--theme-card-hover) !important;
+
+    border: 2px solid var(--theme-primary) !important;
+
+    box-shadow:
+        0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+
+}
+
+
+/* =========================================
+   FORCE DARK MODE APPEARANCE FIX
+========================================= */
+
+/* This section specifically fixes your
+   white cards and invisible text problem */
+
+html[data-theme="dark"] .theme-card {
+
+    background-color: #1e293b !important;
+
+    color: #f1f5f9 !important;
+
+    border-color: #475569 !important;
+
+}
+
+
+html[data-theme="dark"] .theme-card:hover {
+
+    background-color: #263449 !important;
+
+    border-color: #818cf8 !important;
+
+}
+
+
+html[data-theme="dark"] .theme-card:has(input[type="radio"]:checked) {
+
+    background-color: #263449 !important;
+
+    border-color: #818cf8 !important;
+
+    box-shadow:
+        0 0 0 3px rgba(129, 140, 248, 0.20) !important;
+
+}
+
+
+/* Force ALL Appearance text to be visible */
+
+html[data-theme="dark"] .theme-card .theme-text {
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+
+}
+
+
+html[data-theme="dark"] .theme-card .theme-text strong {
+
+    display: block !important;
+
+    color: #ffffff !important;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+
+}
+
+
+html[data-theme="dark"] .theme-card .theme-text span {
+
+    display: block !important;
+
+    color: #cbd5e1 !important;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+
+}
+
+
+/* Dark Mode Icon */
+
+html[data-theme="dark"] .theme-card .theme-icon {
+
+    background-color:
+        rgba(129, 140, 248, 0.18) !important;
+
+    color: #a5b4fc !important;
+
+}
+
+
+/* =========================================
+   ACCOUNT ACTIVITY
+========================================= */
+
+.activity-card {
+
+    text-decoration: none;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+
+}
+
+
+.activity-card:hover {
+
+    background-color:
+        var(--theme-card-hover) !important;
+
+    transform: translateY(-1px);
+
+}
+
+
+.activity-content h6 {
+
+    color: var(--theme-text) !important;
+
+}
+
+
+.activity-content p {
+
+    color: var(--theme-muted) !important;
+
+}
+
+
+.activity-arrow {
+
+    color: var(--theme-primary) !important;
+
+}
+
+
+/* =========================================
+   ICON BOXES
+========================================= */
+
+.profile-avatar,
+.security-icon,
+.activity-icon,
+.section-icon {
+
+    background-color:
+        rgba(99, 102, 241, 0.12) !important;
+
+    color: var(--theme-primary) !important;
+
+}
+
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.btn-primary {
+
+    background-color:
+        var(--theme-primary) !important;
+
+    border-color:
+        var(--theme-primary) !important;
+
+}
+
+
+.btn-primary:hover {
+
+    background-color:
+        var(--theme-primary-hover) !important;
+
+    border-color:
+        var(--theme-primary-hover) !important;
+
+}
+
+
+/* =========================================
+   PROFILE FORM INPUTS
+========================================= */
+
+.profile-page .form-control,
+.profile-page .form-select {
+
+    background-color:
+        var(--theme-card) !important;
+
+    color:
+        var(--theme-text) !important;
+
+    border-color:
+        var(--theme-border) !important;
+
+}
+
+
+.profile-page .form-control:focus,
+.profile-page .form-select:focus {
+
+    background-color:
+        var(--theme-card) !important;
+
+    color:
+        var(--theme-text) !important;
+
+    border-color:
+        var(--theme-primary) !important;
+
+    box-shadow:
+        0 0 0 0.2rem rgba(79, 70, 229, 0.15);
+
+}
+
+
+/* =========================================
+   TABLES
+========================================= */
+
+.table {
+
+    color: var(--theme-text) !important;
+
+}
+
+
+.table th,
+.table td {
+
+    background-color:
+        var(--theme-card) !important;
+
+    color:
+        var(--theme-text) !important;
+
+    border-color:
+        var(--theme-border) !important;
+
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.app-footer {
+
+    background-color:
+        var(--theme-card) !important;
+
+    color:
+        var(--theme-muted) !important;
+
+    border-top:
+        1px solid var(--theme-border) !important;
+
+}
+
+
+/* =========================================
+   DARK MODE SHADOWS
+========================================= */
+
+html[data-theme="dark"] .settings-card,
+html[data-theme="dark"] .profile-header-card {
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.18);
+
+}
+
+
+/* =========================================
+   SMOOTH TRANSITIONS
+========================================= */
+
+body,
+.settings-card,
+.profile-header-card,
+.activity-card,
+.theme-card {
+
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease;
+
+}
+
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 768px) {
+
+    .theme-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+/* =========================================
+   FORCE APPEARANCE THEME CARDS
+========================================= */
+
+/* Theme cards */
+html[data-theme="dark"] .theme-card {
+    background-color: #1e293b !important;
+    border: 1px solid #475569 !important;
+    color: #f8fafc !important;
+}
+
+
+/* Theme card content */
+html[data-theme="dark"] .theme-card-content {
+    background: transparent !important;
+}
+
+
+/* Theme card title */
+html[data-theme="dark"] .theme-card .theme-text strong {
+    color: #f8fafc !important;
+    opacity: 1 !important;
+}
+
+
+/* Theme card description */
+html[data-theme="dark"] .theme-card .theme-text span {
+    color: #cbd5e1 !important;
+    opacity: 1 !important;
+}
+
+
+/* Theme icon box */
+html[data-theme="dark"] .theme-card .theme-icon {
+    background-color: #293548 !important;
+    color: #a5b4fc !important;
+}
+
+
+/* Selected theme card */
+html[data-theme="dark"] .theme-card:has(input[type="radio"]:checked) {
+    background-color: #263449 !important;
+
+    border: 2px solid #818cf8 !important;
+
+    box-shadow:
+        0 0 0 3px rgba(129, 140, 248, 0.18) !important;
+}
+
+
+/* Selected card text */
+html[data-theme="dark"] .theme-card:has(input[type="radio"]:checked) .theme-text strong {
+    color: #ffffff !important;
+}
+
+
+html[data-theme="dark"] .theme-card:has(input[type="radio"]:checked) .theme-text span {
+    color: #cbd5e1 !important;
+}
+
+
+/* Hover effect */
+html[data-theme="dark"] .theme-card:hover {
+    background-color: #263449 !important;
+}
+
+
+/* =========================================
+   SYSTEM MODE - DARK DEVICE
+========================================= */
+
+@media (prefers-color-scheme: dark) {
+
+    html[data-theme="system"] .theme-card {
+
+        background-color: #1e293b !important;
+
+        border: 1px solid #475569 !important;
+
+        color: #f8fafc !important;
+
+    }
+
+
+    html[data-theme="system"] .theme-card .theme-text strong {
+
+        color: #f8fafc !important;
+
+        opacity: 1 !important;
+
+    }
+
+
+    html[data-theme="system"] .theme-card .theme-text span {
+
+        color: #cbd5e1 !important;
+
+        opacity: 1 !important;
+
+    }
+
+
+    html[data-theme="system"] .theme-card .theme-icon {
+
+        background-color: #293548 !important;
+
+        color: #a5b4fc !important;
+
+    }
+
+
+    html[data-theme="system"] .theme-card:has(input[type="radio"]:checked) {
+
+        background-color: #263449 !important;
+
+        border: 2px solid #818cf8 !important;
+
+        box-shadow:
+            0 0 0 3px rgba(129, 140, 248, 0.18) !important;
+
+    }
+
+}

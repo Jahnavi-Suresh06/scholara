@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+{% block title %}Search | Scholara{% endblock %}
+
+{% block content %}
+<h4 class="mb-3"><i class="bi bi-search"></i> Search Papers</h4>
+
+<ul class="nav nav-pills mb-3">
+    <li class="nav-item">
+        <a class="nav-link {% if mode != 'semantic' %}active{% endif %}"
+            href="{{ url_for('search.search', mode='lexical', q=general_query) }}">
+            <i class="bi bi-funnel"></i> Lexical (title/author/keyword/domain)
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link {% if mode == 'semantic' %}active{% endif %}"
+            href="{{ url_for('search.search', mode='semantic', q=general_query) }}">
+            <i class="bi bi-cpu"></i> Semantic (meaning-based)
+        </a>
+    </li>
+</ul>
+
+{% if mode == 'semantic' %}
+
+<form method="get" class="card card-modern card-body mb-4">
+    <input type="hidden" name="mode" value="semantic">
+
+    <div class="input-group">
+        <input type="text" class="form-control" name="q"
+            placeholder="Describe what you're looking for, in your own words..." value="{{ general_query }}">
+
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-search"></i> Search
+        </button>
+    </div>
+
+    <p class="text-muted small mt-2 mb-0">
+        Ranked by Sentence-BERT cosine similarity -- results can match your
+        query's <em>meaning</em> even without sharing exact words.
+    </p>
+</form>
+
+{% if not general_query %}
+
+<div class="empty-state">
+    <i class="bi bi-cpu"></i>
+    <p class="mb-0">Enter a query above to search by meaning.</p>
+</div>
+
+{% elif not semantic_available %}
+
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle-fill"></i> Semantic search isn't available yet. Run
+    <code>python datasets/scripts/build_embeddings.py</code>
+    to generate embeddings.
+</div>
+
+{% elif semantic_results|length == 0 %}
+
+<div class="empty-state">
+    <i class="bi bi-search"></i>
+    <p class="mb-0">No semantically similar papers found.</p>
+</div>
+
+{% else %}
+
+<p class="text-muted small">
+    {{ semantic_results|length }} result(s), ranked by meaning.
+</p>
+
+<div class="d-flex flex-column gap-3">
+
+    {% for item in semantic_results %}
+
+    <div class="card card-modern">
+        <div class="card-body">
+
+            <a href="{{ url_for('paper.paper_detail', paper_id=item.paper.id) }}"
+                class="text-decoration-none text-body">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <h6 class="mb-1">
+                        {{ item.paper.title }}
+                    </h6>
+
+                    <span class="match-badge"><i class="bi bi-graph-up"></i> {{ item.explanation.score_percent }}%
+                        match</span>
+
+                </div>
+
+                <p class="mb-2 text-muted small">
+                    {{ item.paper.authors }}
+                </p>
+
+            </a>
+
+            <!-- Why This Paper - Semantic Search -->
+
+            <div class="explanation-card">
+
+                <div class="explanation-title">
+                    <i class="bi bi-lightbulb"></i> Why this was recommended
+                </div>
+
+                <p class="mb-1">
+                    {{ item.explanation.summary }}
+                </p>
+
+                {% if item.explanation.related_topics %}
+
+                <div class="mt-2">
+
+                    <span class="text-muted small me-1">
+                        Related Concepts:
+                    </span>
+
+                    {% for topic in item.explanation.related_topics %}
+
+                    <span class="chip">
+                        {{ topic }}
+                    </span>
+
+                    {% endfor %}
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
+
+{% else %}
+
+<!-- LEXICAL SEARCH -->
+
+<form method="get" class="card card-modern card-body mb-4">
+
+    <input type="hidden" name="mode" value="lexical">
+
+    <div class="row g-2">
+
+        <div class="col-md-3">
+            <input type="text" class="form-control" name="title" placeholder="Title contains..." value="{{ title }}">
+        </div>
+
+        <div class="col-md-3">
+            <input type="text" class="form-control" name="author" placeholder="Author contains..." value="{{ author }}">
+        </div>
+
+        <div class="col-md-3">
+            <input type="text" class="form-control" name="keyword" placeholder="Keyword contains..."
+                value="{{ keyword }}">
+        </div>
+
+        <div class="col-md-3">
+            <input type="text" class="form-control" name="domain" placeholder="Domain e.g. cs.LG" value="{{ domain }}">
+        </div>
+
+    </div>
+
+    <div class="mt-2">
+
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-funnel"></i> Filter
+        </button>
+
+        <a href="{{ url_for('search.search') }}" class="btn btn-outline-secondary">
+            Clear
+        </a>
+
+    </div>
+
+    <p class="text-muted small mt-2 mb-0">
+        This is lexical/filter search (exact substring matching).
+        Try the "Semantic" tab above to search by meaning instead.
+    </p>
+
+</form>
+
+
+{% if results is none %}
+
+<div class="empty-state">
+    <i class="bi bi-funnel"></i>
+    <p class="mb-0">Enter a search term or filter above to find papers.</p>
+</div>
+
+
+{% elif results.items|length == 0 %}
+
+<div class="empty-state">
+    <i class="bi bi-search"></i>
+    <p class="mb-0">No papers matched your search.</p>
+</div>
+
+
+{% else %}
+
+<p class="text-muted small">
+    {{ results.total }} paper(s) found.
+</p>
+
+<div class="d-flex flex-column gap-3 mb-3">
+
+    {% for paper in results.items %}
+
+    <div class="card card-modern">
+        <div class="card-body">
+
+            <a href="{{ url_for('paper.paper_detail', paper_id=paper.id) }}" class="text-decoration-none text-body">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <h6 class="mb-1">
+                        {{ paper.title }}
+                    </h6>
+
+                    {% if paper.publication_year %}
+                    <small class="text-muted">
+                        {{ paper.publication_year }}
+                    </small>
+                    {% endif %}
+
+                </div>
+
+                <p class="mb-1 text-muted small">
+                    {{ paper.authors }}
+                </p>
+
+                <p class="mb-1 small">
+                    {{ paper.abstract[:200] }}
+                    {% if paper.abstract|length > 200 %}...{% endif %}
+                </p>
+
+                {% if paper.keywords %}
+                <span class="chip">
+                    {{ paper.keywords }}
+                </span>
+                {% endif %}
+
+            </a>
+
+
+            <!-- Why This Paper - Lexical Search -->
+
+            {% set explanation = lexical_explanations.get(paper.id) if lexical_explanations else none %}
+
+            {% if explanation %}
+
+            <div class="explanation-card">
+
+                <div class="explanation-title">
+                    <i class="bi bi-lightbulb"></i> Why this paper appeared
+                </div>
+
+                {% if explanation.reasons|length > 1 %}
+
+                <p class="mb-1">
+                    {{ explanation.summary }}
+                </p>
+
+                <ul>
+
+                    {% for reason in explanation.reasons %}
+
+                    <li>
+                        <i class="bi bi-check-circle-fill"></i> {{ reason }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+                {% else %}
+
+                <p class="mb-0">
+                    {{ explanation.summary }}
+                </p>
+
+                {% endif %}
+
+            </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+
+{% if results.pages > 1 %}
+
+<nav>
+
+    <ul class="pagination">
+
+        {% for page_num in results.iter_pages() %}
+
+        {% if page_num %}
+
+        <li class="page-item {% if page_num == results.page %}active{% endif %}">
+
+            <a class="page-link" href="{{ url_for(
+                                       'search.search',
+                                       mode='lexical',
+                                       q=general_query,
+                                       title=title,
+                                       author=author,
+                                       keyword=keyword,
+                                       domain=domain,
+                                       page=page_num
+                                   ) }}">
+
+                {{ page_num }}
+
+            </a>
+
+        </li>
+
+        {% else %}
+
+        <li class="page-item disabled">
+            <span class="page-link">…</span>
+        </li>
+
+        {% endif %}
+
+        {% endfor %}
+
+    </ul>
+
+</nav>
+
+{% endif %}
+
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

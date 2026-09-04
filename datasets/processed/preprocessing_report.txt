@@ -1,0 +1,32 @@
+============================================================
+OPENALEX DATASET FETCH REPORT
+============================================================
+Search query        : (none)
+Filter              : author.id:A5107743738
+Records fetched from API : 1
+
+Rows removed (by reason):
+  - Missing mandatory field(s)      : 0
+  - Abstract too short (<20 words)  : 0
+  - Duplicate paper_id               : 0
+Final cleaned dataset size: 1 rows
+
+Missing value counts (in final cleaned dataset, per column):
+  - paper_id: 0
+  - title: 0
+  - authors: 0
+  - abstract: 0
+  - categories: 0
+  - published_date: 0
+  - journal_ref: 1
+  - doi: 0
+  - citation_count: 0
+  - pdf_link: 0
+
+Sample records (first 3 rows):
+------------------------------------------------------------
+[0] paper_id: W4403124552  doi: 10.1109/nmitcon62075.2024.10699009
+    title: Systematic Review on Frameworks for Intrusion Detection using Machine Learning and Deep Learning Alg
+    venue:   citations: 3
+    abstract (first 150 chars): These days, information technology-driven businesses and companies are primarily concerned with cybersecurity challenges and their increasing complexi...
+------------------------------------------------------------

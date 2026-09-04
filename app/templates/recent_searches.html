@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Recent Searches | Scholara{% endblock %}
+
+
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+
+        <h2 class="fw-bold">
+            <i class="bi bi-clock-history me-2"></i>
+            Recent Searches
+        </h2>
+
+        <p class="text-muted mb-0">
+            View your recently searched research topics.
+        </p>
+
+    </div>
+
+
+    <!-- Recent Searches Card -->
+    <div class="card card-modern">
+
+        <div class="card-body p-4">
+
+
+            {% if searches %}
+
+            <div class="list-group list-group-flush">
+
+                {% for search in searches %}
+
+                <div class="list-group-item px-0 py-3">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <!-- Search Information -->
+                        <div class="d-flex align-items-center gap-3">
+
+                            <div class="history-icon">
+
+                                <i class="bi bi-search"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <h6 class="mb-1 fw-semibold">
+
+                                    {{ search.query_text }}
+
+                                </h6>
+
+
+                                <small class="text-muted">
+
+                                    <i class="bi bi-clock me-1"></i>
+
+                                    {{ search.searched_at.strftime('%d %b %Y, %I:%M %p') }}
+
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Search Again Button -->
+                        <a href="{{ url_for('search.search', q=search.query_text) }}"
+                            class="btn btn-outline-primary btn-sm">
+
+                            Search Again
+
+                            <i class="bi bi-arrow-right ms-1"></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            {% else %}
+
+            <!-- Empty State -->
+
+            <div class="text-center py-5">
+
+                <div class="empty-history-icon mb-3">
+
+                    <i class="bi bi-clock-history"></i>
+
+                </div>
+
+
+                <h5 class="fw-semibold">
+
+                    No Recent Searches Yet
+
+                </h5>
+
+
+                <p class="text-muted">
+
+                    Your search history will appear here after you search for research papers.
+
+                </p>
+
+
+                <a href="{{ url_for('search.search') }}" class="btn btn-primary">
+
+                    <i class="bi bi-search me-2"></i>
+
+                    Search Papers
+
+                </a>
+
+            </div>
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
