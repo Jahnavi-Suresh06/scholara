@@ -968,3 +968,144 @@ html[data-theme="dark"] #messageInput {
     }
 
 }
+
+
+/* =========================================
+   RESEARCH PAPER CARDS IN CHATBOT
+========================================= */
+
+.chatbot-paper-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 18px;
+    width: 100%;
+}
+
+.chatbot-paper-card {
+    background: var(--theme-card);
+    border: 1px solid var(--theme-border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.chatbot-paper-card:hover {
+    border-color: var(--theme-primary, #6366f1);
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.12);
+}
+
+.paper-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.paper-title-link {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--theme-text, #1e293b);
+    text-decoration: none;
+    transition: color 0.15s ease;
+    flex: 1;
+}
+
+.paper-title-link:hover {
+    color: var(--theme-primary, #6366f1);
+    text-decoration: underline;
+}
+
+.paper-score-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 20px;
+    background: rgba(99, 102, 241, 0.12);
+    color: var(--theme-primary, #6366f1);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    white-space: nowrap;
+}
+
+.paper-authors {
+    font-size: 13px;
+    color: var(--theme-muted, #64748b);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.paper-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    font-size: 12px;
+    color: var(--theme-muted, #64748b);
+    margin-top: 6px;
+}
+
+.paper-meta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.paper-abstract {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--theme-text, #334155);
+    opacity: 0.92;
+    margin: 10px 0 12px 0;
+}
+
+.paper-actions-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px solid var(--theme-border, #e2e8f0);
+}
+
+.paper-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.paper-action-btn.primary {
+    background: var(--theme-primary, #6366f1);
+    color: #ffffff !important;
+    border: 1px solid var(--theme-primary, #6366f1);
+}
+
+.paper-action-btn.primary:hover {
+    opacity: 0.9;
+    color: #ffffff !important;
+}
+
+.paper-action-btn.outline {
+    background: transparent;
+    color: var(--theme-text, #334155);
+    border: 1px solid var(--theme-border, #cbd5e1);
+}
+
+.paper-action-btn.outline:hover {
+    border-color: var(--theme-primary, #6366f1);
+    color: var(--theme-primary, #6366f1);
+    background: rgba(99, 102, 241, 0.05);
+}

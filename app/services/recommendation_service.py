@@ -88,6 +88,51 @@ def _to_search_result_list(raw_results, query_text: str):
     return results
 
 
+def _keyword_fallback_results(query_text: str, top_k: int):
+    """
+    Converts search_service.keyword_fallback_search()'s output into the
+    exact same shape semantic_search() normally returns --
+    [{"paper": Paper, "score": ..., "explanation": {...}}, ...] -- so that
+    nothing downstream (chatbot.py, search.html's semantic-mode template)
+    needs to know or care whether a result came from real SBERT semantic
+    search or this keyword fallback.
+
+    Imported locally (not at module top) to match this file's existing
+    pattern for service-to-service imports (see get_personalized_
+    recommendations()'s local import of bookmark_service below), and to
+    keep this fallback's dependency out of the module's always-loaded
+    import list.
+    """
+    from app.services.search_service import keyword_fallback_search
+
+    matches = keyword_fallback_search(query_text, top_k=top_k)
+
+    results = []
+    for paper, matched_keywords, score in matches:
+        if matched_keywords:
+            topics_str = ", ".join(matched_keywords[:5])
+            summary = (
+                f"This paper was found via keyword search (semantic search is "
+                f"temporarily unavailable) because it mentions: {topics_str}."
+            )
+        else:
+            summary = (
+                "This paper was found via keyword search because semantic "
+                "search is temporarily unavailable."
+            )
+
+        explanation = {
+            "score": round(float(score), 4),
+            "score_percent": round(min(1.0, score) * 100),
+            "label": "Keyword match",
+            "related_topics": matched_keywords,
+            "summary": summary,
+        }
+        results.append({"paper": paper, "score": score, "explanation": explanation})
+
+    return results
+
+
 def get_similar_papers(paper_id: int, top_k: int = 5) -> dict:
     """For the paper detail page's 'Similar Papers' section."""
     store = _get_vector_store()
@@ -101,26 +146,54 @@ def get_similar_papers(paper_id: int, top_k: int = 5) -> dict:
     return {"available": True, "results": _to_result_list(raw_results, query_text)}
 
 
-def semantic_search(query_text: str, top_k: int = 10) -> dict:
-    """For the search page's semantic search mode."""
+def semantic_search(query_text: str, top_k: int = 10, fallback_on_error: bool = False) -> dict:
+    """
+    For the search page's semantic search mode, and for ResearchBot's
+    paper retrieval.
+
+    If embeddings haven't been built at all, this still returns
+    {"available": False, "results": []}, exactly as before -- unchanged.
+
+    If embeddings exist but the SBERT embedder itself fails to load or run
+    (e.g. a native dependency -- torch, regex, etc. -- blocked by the host
+    OS's Application Control / security policy, missing on first run with
+    no internet, out of memory, or any other embedder failure), this now
+    falls back to a dynamic keyword search over the same paper database
+    (see search_service.keyword_fallback_search) instead of returning
+    zero results. The vector/SBERT search path itself is completely
+    unchanged and is tried first, every time -- the fallback only runs
+    when that path actually raises.
+    """
     store = _get_vector_store()
     if store is None:
-        return {"available": False, "results": []}
+        return {"available": False, "results": [], "fallback_used": False}
 
     try:
         embedder = get_embedder()
         raw_results = ml_recommender.semantic_search(embedder, store, query_text, top_k=top_k)
     except Exception:
-        # Covers: sentence-transformers not installed, no internet on first
-        # model download, out-of-memory, or any other embedder failure.
-        # From the user's perspective this is the same situation as
-        # "recommendations aren't available yet" -- we degrade gracefully
-        # rather than surfacing a 500 error page. The actual exception is
-        # still logged server-side for debugging.
-        current_app.logger.exception("Semantic search failed to load/run the embedder")
-        return {"available": False, "results": []}
+        # Covers: sentence-transformers/torch/regex native DLL blocked by
+        # OS policy, not installed, no internet on first model download,
+        # out-of-memory, or any other embedder/search failure. Previously
+        # this degraded all the way to "no results" -- now it degrades one
+        # step further, to keyword search, before giving up entirely.
+        current_app.logger.exception(
+            "Semantic search failed to load/run the embedder"
+        )
+        if fallback_on_error:
+            fallback_results = _keyword_fallback_results(query_text, top_k)
+            return {
+                "available": True,
+                "results": fallback_results,
+                "fallback_used": True,
+            }
+        return {"available": False, "results": [], "fallback_used": False}
 
-    return {"available": True, "results": _to_search_result_list(raw_results, query_text)}
+    return {
+        "available": True,
+        "results": _to_search_result_list(raw_results, query_text),
+        "fallback_used": False,
+    }
 
 
 def get_personalized_recommendations(user_id: int, top_k: int = 5) -> dict:

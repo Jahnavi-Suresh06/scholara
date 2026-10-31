@@ -17,6 +17,8 @@ keyword" both query that same column; domain search is just a keyword
 search scoped to a recognizable category code (e.g. "cs.LG").
 """
 
+import re
+
 from app.models.paper import Paper
 
 
@@ -105,24 +107,6 @@ def explain_lexical_match(
     of matching Paper rows, and only re-checks (in Python, read-only) which
     of the filters the user actually typed are present in that paper's
     fields, purely to explain a result that's already been decided.
-
-    Args:
-        paper: a Paper model instance from an already-fetched results page
-        title, author, keyword, domain, general_query: the same filter
-            values passed to search_papers() for this request -- pass
-            whichever ones the user actually supplied; the rest default to
-            None and are simply skipped
-
-    Returns:
-        {
-            "reasons": ['Its title contains "machine"', 'The author field
-                         contains "John"'],
-            "summary": "This paper matches your search because:"
-        }
-        For a single-filter match, "summary" is instead a complete sentence,
-        e.g. "This paper is shown because its title contains \"machine\"."
-        and "reasons" holds that one reason for the template to still use
-        consistently if needed.
     """
     has_specific_filter = any([title, author, keyword, domain])
     reasons = []
@@ -136,8 +120,6 @@ def explain_lexical_match(
     if domain and _matches(paper.keywords, domain):
         reasons.append(f'It belongs to the domain "{domain}"')
 
-    # The "search everything" box (general_query) only applies when no
-    # specific filter was given -- same rule search_papers() itself uses.
     if general_query and not has_specific_filter:
         matched_fields = []
         if _matches(paper.title, general_query):
@@ -154,10 +136,6 @@ def explain_lexical_match(
                 f'Your search "{general_query}" was found in its {fields_str}')
 
     if not reasons:
-        # Fallback per spec: never leave the section blank/erroring. In
-        # normal operation search_papers() only ever returns rows that
-        # matched a filter, so this only guards edge cases (e.g. a filter
-        # value not passed through to this function).
         reasons = ["This paper matched your current search filters"]
 
     if len(reasons) == 1:
@@ -167,3 +145,116 @@ def explain_lexical_match(
         summary = "This paper matches your search because:"
 
     return {"reasons": reasons, "summary": summary}
+
+
+# -----------------------------------------------------------------------------
+# KEYWORD FALLBACK FOR SEMANTIC SEARCH / RESEARCHBOT
+#
+# Used ONLY by recommendation_service.semantic_search() as an emergency
+# substitute for SBERT-based semantic search, for the specific case where
+# the embedder itself fails to load (e.g. a native dependency -- torch,
+# regex, etc. -- blocked by the host OS's security policy). It is NOT used
+# by the lexical search page above (search_papers() is untouched and still
+# that page's implementation), and it is NOT used when embeddings simply
+# haven't been built yet (that case still correctly reports
+# "available": False, same as before this change).
+#
+# Unlike search_papers()'s single-phrase substring match, this extracts
+# individual meaningful keywords from a free-text question and ranks
+# papers by how many distinct keywords they match -- closer to what a
+# user asking a natural-language question to a chatbot actually needs.
+# -----------------------------------------------------------------------------
+
+_STOP_WORDS = {
+    "a", "an", "the", "and", "or", "for", "with", "about", "on", "in", "of",
+    "to", "is", "are", "what", "which", "give", "me", "please", "show",
+    "find", "tell", "list", "explain", "describe", "summarize", "paper",
+    "papers", "research", "related", "regarding", "info", "information",
+}
+
+
+def _extract_keywords(question: str) -> list:
+    """
+    Lowercases and tokenizes a free-text question, discards a small
+    stopword list and single-character tokens, and de-duplicates while
+    preserving first-seen order. Works for any question dynamically --
+    nothing here is specific to any one topic.
+    """
+    tokens = re.findall(r"[a-zA-Z0-9\-]+", question.lower())
+    seen = set()
+    keywords = []
+    for token in tokens:
+        if token in _STOP_WORDS or len(token) <= 1:
+            continue
+        if token not in seen:
+            seen.add(token)
+            keywords.append(token)
+    return keywords
+
+
+def keyword_fallback_search(question: str, top_k: int = 5):
+    """
+    Extracts meaningful keywords from a free-text question and searches
+    title/abstract/keywords for each one, ranking papers by how many
+    distinct keywords they match (ties broken by citation_count, then id,
+    for stable, reproducible ordering).
+
+    One query per extracted keyword (not per paper), so this stays fast
+    even across a large table -- each query is a simple ILIKE scan, not an
+    N+1 loop over paper rows. Each per-keyword fetch is capped at 200 rows
+    as a safety bound against a single very common keyword (e.g. "model")
+    pulling in a huge number of candidates before ranking narrows it down.
+
+    Returns:
+        A list of (Paper, matched_keywords, relevance_score) tuples for the
+        top_k best-matching papers, relevance_score in (0, 1] = (number of
+        distinct keywords matched) / (number of keywords extracted).
+        Returns [] if no usable keywords were extracted, or if nothing in
+        the database matched any of them.
+    """
+    keywords = _extract_keywords(question)
+    if not keywords:
+        return []
+
+    paper_matches = {}  # paper.id -> {"paper": Paper, "matched": set()}
+
+    for kw in keywords:
+        like_pattern = f"%{kw}%"
+        matches = (
+            Paper.query.filter(
+                db_or(
+                    Paper.title.ilike(like_pattern),
+                    Paper.abstract.ilike(like_pattern),
+                    Paper.keywords.ilike(like_pattern),
+                )
+            )
+            .limit(200)
+            .all()
+        )
+
+        for paper in matches:
+            entry = paper_matches.setdefault(
+                paper.id, {"paper": paper, "matched": set()}
+            )
+            entry["matched"].add(kw)
+
+    if not paper_matches:
+        return []
+
+    ranked = sorted(
+        paper_matches.values(),
+        key=lambda e: (
+            -len(e["matched"]),
+            -(e["paper"].citation_count or 0),
+            e["paper"].id,
+        ),
+    )[:top_k]
+
+    max_possible = len(keywords)
+    results = []
+    for entry in ranked:
+        matched_sorted = sorted(entry["matched"])
+        score = len(entry["matched"]) / max_possible
+        results.append((entry["paper"], matched_sorted, score))
+
+    return results
